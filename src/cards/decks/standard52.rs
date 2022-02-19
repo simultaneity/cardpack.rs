@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::fmt;
+use std::str::SplitWhitespace;
 
 use crate::cards::decks::deck_error::DeckError;
 use crate::cards::decks::standard52_set::Standard52Set;
@@ -104,6 +105,22 @@ impl Standard52 {
         }
 
         Ok(set.to_pile())
+    }
+
+    pub fn pile_from_string(card_string: &'static String) -> Result<Pile, DeckError> {
+        let mut pile = Pile::default();
+        // let s = card_string.clone();
+        let v: Vec<&str> = card_string.split(' ').collect();
+        for index in v {
+            let card = Standard52::card_from_index(index);
+
+            if card.is_valid() {
+                pile.push(card);
+            } else {
+                return Err(DeckError::InvalidIndex);
+            }
+        }
+        Ok(pile)
     }
 
     /// # Errors
